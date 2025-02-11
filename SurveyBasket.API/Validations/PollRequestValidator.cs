@@ -1,6 +1,4 @@
 ﻿
-using FluentValidation;
-
 namespace SurveyBasket.API.Validations
 {
 	//Client side (CreatePollRequest)

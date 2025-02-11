@@ -1,4 +1,5 @@
 ﻿
+
 using SurveyBasket.API.Data.Migrations;
 using SurveyBasket.API.Resource;
 using System.Threading.Tasks;
@@ -6,12 +7,15 @@ namespace SurveyBasket.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class PollsController : ControllerBase
 	{
 		private readonly IUnitOfWork _unitOfWork;
-		public PollsController(IUnitOfWork unitOfWork)
+		private readonly IConfiguration _configuration;
+		public PollsController(IUnitOfWork unitOfWork, IConfiguration configuration)
 		{
 			_unitOfWork = unitOfWork;
+			_configuration = configuration;
 		}
 
 		[HttpGet("")]
@@ -81,6 +85,5 @@ namespace SurveyBasket.API.Controllers
 			_unitOfWork.Commit(cancellationToken);
 			return Ok();
 		}
-
 	}
 }

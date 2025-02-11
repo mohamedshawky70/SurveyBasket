@@ -1,5 +1,6 @@
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasket.API;
+using SurveyBasket.API.Resources;
 using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
