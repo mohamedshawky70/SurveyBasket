@@ -9,14 +9,13 @@ public class UnitOfWork : IUnitOfWork
 {
 	private readonly ApplicationDbContext _dbContext;
 	public IBaseRepo<Poll> polls { get; }
+	public IBaseRepo<Question> question { get; }
+
 	public UnitOfWork(ApplicationDbContext dbContext)
 	{
 		_dbContext = dbContext;
 		polls = new BaseRepo<Poll>(_dbContext);
-
+		question = new BaseRepo<Question>(_dbContext);
 	}
-	public async Task<int> Commit(CancellationToken cancellationToken)
-	{
-		 return await _dbContext.SaveChangesAsync(cancellationToken);
-	}
+	
 }

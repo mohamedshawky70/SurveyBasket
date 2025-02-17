@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasket.API.Authentication;
 using SurveyBasket.API.Data;
+using SurveyBasket.API.ExceptionHandler;
 using SurveyBasket.API.Resources;
 using System.Reflection;
 using System.Text;
@@ -35,7 +36,6 @@ public static class DependencyInjection
 
 		//Add UnitOfWork
 		services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 		// Add services to the container.
 		services.AddControllers();
 		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -46,8 +46,19 @@ public static class DependencyInjection
 			.AddEntityFrameworkStores<ApplicationDbContext>();*/
 		//app.MapIdentityApi<ApplicationUser>(); In Program.cs
 
+		//Add IOptions
+		services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+		//علشان يشغل الفليديشن علي الكلاس علشان ممكن اغلط وادخل قيم غير منطقيه زي وقت انتهاء التوكن بالسالب او مدخلهوش اصلا
+		services.AddOptions<JwtSettings>().BindConfiguration(nameof(JwtSettings)).ValidateDataAnnotations();
+		//مش هعرف اعمل انجكت هنا علشان ستاتك كلاس فالحل ده علشان اعرف اجيب قيم الكلاس من السكشن علشان استخدمهم هنا
+		var settings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 		//Add login(generate JWT)
 		services.AddSingleton<IJwtProvider, JwtProvider>();
+		services.AddScoped<IAuthService, AuthService>();
+		//Add exceptionHandler
+		services.AddExceptionHandler<GlobalExceptionHandler>();
+		services.AddProblemDetails();
+
 		services.AddAuthentication(option =>
 		{
 			option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -63,13 +74,15 @@ public static class DependencyInjection
 				ValidateAudience = true,
 				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OvQWhp2kSk9D1RG8rrHI1qLeiKmBxRaz")),
-				ValidIssuer = "SurveyBasketApp",
-				ValidAudience = "SurveyBasketUsers",
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key)),
+				ValidIssuer =settings.Issuer,
+				ValidAudience = settings.Audience,
 			};
 		});
-		//Add Auth service
-		services.AddScoped<IAuthService, AuthService>();
+		//Add CORS
+		services.AddCors(); //default policy
+
+		
 		return services;
 	}
 }

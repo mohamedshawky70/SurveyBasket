@@ -12,3 +12,7 @@ global using SurveyBasket.API.Resources;
 global using Microsoft.AspNetCore.Identity.Data;
 global using SurveyBasket.API.Authentication;
 global using Microsoft.AspNetCore.Authorization;
+global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
+global using SurveyBasket.API.ErrorHandling;
+global using OneOf;

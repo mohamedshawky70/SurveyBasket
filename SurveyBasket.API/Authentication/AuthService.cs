@@ -1,4 +1,6 @@
 ﻿
+using System.Security.Cryptography;
+
 namespace SurveyBasket.API.Authentication;
 public class AuthService : IAuthService
 {
@@ -9,20 +11,20 @@ public class AuthService : IAuthService
 		_userManager = userManager;
 		_jwtProvider = jwtProvider;
 	}
-
-	public async Task<AuthResponse> GetTakenAsync(string email, string password, CancellationToken cancellationToken = default)
+	public async Task<OneOf<AuthResponse?, Errors>> GetTakenAsync(string email, string password, CancellationToken cancellationToken = default)
 	{
 		//check email
 		var user =await _userManager.FindByEmailAsync(email);
 		if (user is null)
-			return null;
+			return UserErrors.InvalidCredential;
 
 		//check password
 		var IsValidPass=await _userManager.CheckPasswordAsync(user, password);
 		if (!IsValidPass)
-			return null;
-		//generat JWT taken
+			return UserErrors.InvalidCredential;
+		//generate JWT taken
 		var (taken, expiresIn) = _jwtProvider.GenerateTaken(user);
 		return new AuthResponse(user.Id,user.Email,user.FirstName,user.LastName, taken, expiresIn);
+		
 	}
 }

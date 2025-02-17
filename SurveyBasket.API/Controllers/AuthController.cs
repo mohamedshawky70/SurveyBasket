@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SurveyBasket.API.ErrorHandling;
 
 
 namespace SurveyBasket.API.Controllers
@@ -13,12 +14,17 @@ namespace SurveyBasket.API.Controllers
 		{
 			_authService = authService;
 		}
-
 		[HttpPost]
         public async Task<IActionResult> LoginAsync(LogiinRequest request,CancellationToken cancellationToken)
         {
-            var authResult=await _authService.GetTakenAsync(request.email, request.password, cancellationToken);
-            return authResult is null ?BadRequest("Ivalid email or password") : Ok(authResult);
+			//throw new Exception("My Exception");
+			var authResult=await _authService.GetTakenAsync(request.email, request.password, cancellationToken);
+            //return authResult is null ?BadRequest("Invalid email or password") : Ok(authResult);ده صح واللي تحت الاصح
+            return authResult.Match(
+                authResult => Ok(authResult),//لو مرجعش error
+                error => Problem(statusCode: StatusCodes.Status400BadRequest, //لو رجع error
+				title: error.Code, detail: error.Description)
+            );
 		}
     }
 }

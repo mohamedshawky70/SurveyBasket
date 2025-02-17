@@ -1,4 +1,3 @@
-﻿
 
 using SurveyBasket.API.Data.Migrations;
 using SurveyBasket.API.Resource;
@@ -39,39 +38,42 @@ namespace SurveyBasket.API.Controllers
 		public async Task<IActionResult> CreateAsync([FromBody]PollRequest request,
 			CancellationToken cancellationToken)
 		{
+			var IsExistedTitle = await _unitOfWork.polls.FindMatch(x => x.Title == request.Title);
+				if(IsExistedTitle != null)
+				   return BadRequest(PollErrors.DuplicatedPollTitle);
 			var Poll = request.Adapt<Poll>();
 			var newPoll = await _unitOfWork.polls.CreateAsync(Poll, cancellationToken);
-			_unitOfWork.Commit(cancellationToken);
-			return Ok(newPoll);
+			var Response = newPoll.Adapt<PollResponse>();
+			return Ok(Response);
 		}
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateAsync([FromRoute]int id,[FromBody] PollRequest request,
 			CancellationToken cancellationToken)
 		{
+			var IsExistedTitle = await _unitOfWork.polls.FindMatch(x => x.Title == request.Title&&x.Id!= id);
+			if (IsExistedTitle != null)
+				return BadRequest(PollErrors.DuplicatedPollTitle);
 			//var Poll = request.Adapt<Poll>();
 			var Poll =await _unitOfWork.polls.GetByIdAsync(id);
 			if (Poll is null)
-				return NotFound();
+				return NotFound(PollErrors.NotFound);
 
 			Poll.Title = request.Title;
 			Poll.Summary = request.Summary;
-			Poll.IsPublished = request.IsPublished;
 			Poll.StartsAt = request.StartsAt;
 			Poll.EndsAt = request.EndsAt;
 
 			var newPoll= await _unitOfWork.polls.UpdateAsync(Poll, cancellationToken);
-			_unitOfWork.Commit(cancellationToken);
-			return Ok(newPoll);
+			return Ok(newPoll.Adapt<PollResponse>());
 		}
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteAsync([FromRoute]int id, CancellationToken cancellationToken)
 		{
 			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
 			if (Poll is null)
-				return NotFound();
+				return NotFound(PollErrors.NotFound);
 			await _unitOfWork.polls.DeleteAsync(Poll, cancellationToken);
-			_unitOfWork.Commit(cancellationToken);
 			return Ok();
 		}
 		[HttpPut("TogglePublishStatus/{id}")]
@@ -79,10 +81,9 @@ namespace SurveyBasket.API.Controllers
 		{
 			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
 			if (Poll is null)
-				return NotFound();
+				return NotFound(PollErrors.NotFound);
 			Poll.IsPublished = !Poll.IsPublished;
 			await _unitOfWork.polls.UpdateAsync(Poll, cancellationToken);
-			_unitOfWork.Commit(cancellationToken);
 			return Ok();
 		}
 	}

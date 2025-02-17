@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq.Expressions;
+using System.Threading;
 
 namespace SurveyBasket.API.Repository.BaseRopository
 {
@@ -6,6 +7,7 @@ namespace SurveyBasket.API.Repository.BaseRopository
 	{
 		public Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
 		public Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken=default);
+		public Task<T> FindMatch(Expression<Func<T, bool>> match);
 		public Task<T> CreateAsync(T Entity,CancellationToken cancellationToken=default);
 		public Task<T> UpdateAsync(T Entity, CancellationToken cancellationToken = default);
 		public Task<T> DeleteAsync(T Entity, CancellationToken cancellationToken = default);

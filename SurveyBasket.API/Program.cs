@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Start:7/2/2025
 //End:
-
 builder.Services.AddDependencies(builder.Configuration);
 
 var app = builder.Build();
@@ -18,11 +17,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+//Use CORS
+app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthorization();
 
 //app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
+
+//Use exceptionHandler
+//app.UseExceptionHandler();
 
 app.Run();

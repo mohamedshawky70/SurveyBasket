@@ -1,6 +1,7 @@
-﻿namespace SurveyBasket.API.Authentication;
+﻿
+namespace SurveyBasket.API.Authentication;
 
 public interface IAuthService
 {
-	public Task<AuthResponse> GetTakenAsync(string email, string password, CancellationToken cancellationToken = default);
+	public Task<OneOf<AuthResponse?,Errors>> GetTakenAsync(string email, string password, CancellationToken cancellationToken = default);
 }

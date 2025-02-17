@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.API.Resource;
-public class Poll
+public class Poll:BaseClass
 {
 	public int Id { get; set; }
 	public string Title { get; set; } = null!;
@@ -7,6 +7,7 @@ public class Poll
 	public bool IsPublished { get; set; }
 	public DateOnly StartsAt { get; set; }
 	public DateOnly EndsAt { get; set; }
+	public ICollection<Question> questions { get; set; } = [];
 
 }
 

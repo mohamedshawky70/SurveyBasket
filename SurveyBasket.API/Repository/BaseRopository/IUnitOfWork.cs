@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork
 {
-	public Task<int> Commit(CancellationToken cancellationToken);
 	public IBaseRepo<Poll> polls { get; }
+	public IBaseRepo<Question> question { get; }
 
 }
