@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.DTOs.Requests;
 
-public record QusetionRequest
+public record QuestionRequest
 (
 	int PollId,
 	string Content, 

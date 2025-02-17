@@ -15,6 +15,9 @@ namespace SurveyBasket.API.Repository.BaseRopository
 
 		public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken=default) =>
 			await _dbContext.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
+
+		public IQueryable<T?> GetAll() =>
+			 _dbContext.Set<T>().AsNoTracking();
 		public async Task<T?>GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
 			await _dbContext.Set<T>().FindAsync(id, cancellationToken);
 		public async Task<T> CreateAsync(T Entity, CancellationToken cancellationToken = default)
@@ -37,12 +40,30 @@ namespace SurveyBasket.API.Repository.BaseRopository
 			await _dbContext.SaveChangesAsync(cancellationToken);
 			return Entity;
 		}
-
-		public async Task<T> FindMatch(Expression<Func<T, bool>> match)
+		public async Task<T> FindInclude(Expression<Func<T, bool>> match, CancellationToken cancellationToken = default, string[] Include = null)
 		{
 			IQueryable<T> obj = _dbContext.Set<T>();
-			return await obj.FirstOrDefaultAsync(match);
+			if (Include != null)
+			{
+				foreach (var item in Include)
+				{
+					obj = obj.Include(item);
+				}
+			}
+			return await obj.FirstOrDefaultAsync(match, cancellationToken);
 		}
-
+		public async Task<IEnumerable<T>> FindAllInclude(Expression<Func<T, bool>> match, CancellationToken cancellationToken = default, string[] Include = null)
+		{
+			IQueryable<T> obj = _dbContext.Set<T>();
+			if (Include != null)
+			{
+				foreach (var item in Include)
+				{
+					obj = obj.Include(item);
+				}
+			}
+			return await obj.Where(match).ToListAsync(cancellationToken);
+		}
+		
 	}
 }

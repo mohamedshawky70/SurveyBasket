@@ -29,8 +29,18 @@ namespace SurveyBasket.API.Controllers
 		{
 			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
 			if (Poll is null)
-				return NotFound();
+				return NotFound(PollErrors.NotFound);
 			var Response = Poll.Adapt<PollResponse>();
+			return Ok(Response);
+		}
+		
+		[HttpGet("GetCurrentAsync")]
+		public async Task<IActionResult> GetCurrentAsync(CancellationToken cancellationToken)
+		{
+			var Poll = await _unitOfWork.polls.FindAllInclude(p => p.IsPublished && DateOnly.FromDateTime(DateTime.UtcNow) >=p.StartsAt&& DateOnly.FromDateTime(DateTime.UtcNow) <= p.EndsAt);
+			if (Poll is null)
+				return NotFound(PollErrors.NotFound);
+			var Response = Poll.Adapt<IEnumerable<PollResponse>>();
 			return Ok(Response);
 		}
 
@@ -38,7 +48,7 @@ namespace SurveyBasket.API.Controllers
 		public async Task<IActionResult> CreateAsync([FromBody]PollRequest request,
 			CancellationToken cancellationToken)
 		{
-			var IsExistedTitle = await _unitOfWork.polls.FindMatch(x => x.Title == request.Title);
+			var IsExistedTitle = await _unitOfWork.polls.FindInclude(x => x.Title == request.Title);
 				if(IsExistedTitle != null)
 				   return BadRequest(PollErrors.DuplicatedPollTitle);
 			var Poll = request.Adapt<Poll>();
@@ -51,7 +61,7 @@ namespace SurveyBasket.API.Controllers
 		public async Task<IActionResult> UpdateAsync([FromRoute]int id,[FromBody] PollRequest request,
 			CancellationToken cancellationToken)
 		{
-			var IsExistedTitle = await _unitOfWork.polls.FindMatch(x => x.Title == request.Title&&x.Id!= id);
+			var IsExistedTitle = await _unitOfWork.polls.FindInclude(x => x.Title == request.Title&&x.Id!= id);
 			if (IsExistedTitle != null)
 				return BadRequest(PollErrors.DuplicatedPollTitle);
 			//var Poll = request.Adapt<Poll>();

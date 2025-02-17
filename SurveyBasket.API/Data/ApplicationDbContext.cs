@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	public DbSet<Poll> polls { get; set; }
 	public DbSet<Question> questions { get; set; }
 	public DbSet<Answer> answers { get; set; }
+	public DbSet<Vote> votes { get; set; }
+	public DbSet<VoteAnswer> voteAnswers { get; set; }
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		//أي كلاس يبانبلمنت الانرفيس (أ انتتي كونفجريشن)هيضيفه هنا بدل مكنت هضيف عشروميت كلاس لو عندي عشروميت تابل 

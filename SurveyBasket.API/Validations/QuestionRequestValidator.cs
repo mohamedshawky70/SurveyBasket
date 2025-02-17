@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.Validations;
 
-public class QuestionRequestValidator: AbstractValidator<QusetionRequest>
+public class QuestionRequestValidator: AbstractValidator<QuestionRequest>
 {
 	public QuestionRequestValidator()
 	{

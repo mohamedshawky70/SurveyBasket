@@ -16,3 +16,4 @@ global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using SurveyBasket.API.ErrorHandling;
 global using OneOf;
+global using SurveyBasket.API.Extensions;

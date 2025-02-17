@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.DTOs.Responses;
 
-public record AnswerRespons
+public record AnswerResponse
 (
 	int Id,
 	string Content
