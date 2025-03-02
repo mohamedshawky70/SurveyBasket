@@ -2,7 +2,7 @@
 
 namespace SurveyBasket.API.ExceptionHandler;
 
-public class GlobalExceptionHandler :IExceptionHandler
+public class GlobalExceptionHandler : IExceptionHandler
 {
 	private readonly ILogger<GlobalExceptionHandler> _logger;
 	public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)

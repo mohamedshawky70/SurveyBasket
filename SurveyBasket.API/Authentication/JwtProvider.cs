@@ -1,9 +1,10 @@
-﻿
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SurveyBasket.API.Settings;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 namespace SurveyBasket.API.Authentication;
 
 public class JwtProvider : IJwtProvider
@@ -16,7 +17,7 @@ public class JwtProvider : IJwtProvider
 	}
 
 	//tuple to return 2 value
-	public (string taken, int expireIn) GenerateTaken(ApplicationUser user)
+	public (string taken, int expireIn) GenerateTaken(ApplicationUser user, IEnumerable<string> roles)
 	{
 		//Generate claims that add in taken
 		Claim[] claims = new Claim[]
@@ -25,7 +26,8 @@ public class JwtProvider : IJwtProvider
 			new Claim(JwtRegisteredClaimNames.Email, user.Email!),
 			new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
 			new Claim(JwtRegisteredClaimNames.FamilyName,user.LastName),
-			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+			new Claim(nameof(roles),JsonSerializer.Serialize(roles),JsonClaimValueTypes.JsonArray),
+			new Claim(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString()),
 		};
 		//Generate Key to encrypt and decrypt taken
 		var SymmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
@@ -38,9 +40,9 @@ public class JwtProvider : IJwtProvider
 			audience: _jwtSettings.Audience,// لمين التوكن دي
 			claims: claims, //معلومات خاصه باليوزر صاحب هذه التوكن
 			expires: DateTime.UtcNow.AddMinutes(expiresIn),
-			signingCredentials:signingCredentials
+			signingCredentials: signingCredentials
 		);
-		return (taken: new JwtSecurityTokenHandler().WriteToken(taken),expireIn: expiresIn);
+		return (taken: new JwtSecurityTokenHandler().WriteToken(taken), expireIn: expiresIn);
 	}
 	//Refresh Taken
 	public string? ValidateTaken(string taken)
@@ -51,18 +53,18 @@ public class JwtProvider : IJwtProvider
 			//To decrypt taken
 			takenHandler.ValidateToken(taken, new TokenValidationParameters
 			{
-				ValidateIssuer=false, //متعملش validate
+				ValidateIssuer = false, //متعملش validate
 				ValidateAudience = false,
-				ValidateIssuerSigningKey=true,
-				IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)), //المفتاح المسئول عن فك التشفير
-				ClockSkew=TimeSpan.Zero //الديفولت لو لقي التوكن اكسباير استني خمس دجايج انا مش عايز كده
-			},out SecurityToken securityToken);//المكان اللي هتتخزن في التوكن بعد فك التشفير 
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)), //المفتاح المسئول عن فك التشفير
+				ClockSkew = TimeSpan.Zero //الديفولت لو لقي التوكن اكسباير استني خمس دجايج انا مش عايز كده
+			}, out SecurityToken securityToken);//المكان اللي هتتخزن في التوكن بعد فك التشفير 
 			var JwtTaken = (JwtSecurityToken)securityToken; //JwtSecurityToken بص فوق هتلاقيه يحتوي علي كل الكليمز
 			return JwtTaken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
 		}
 		catch (Exception)
 		{
-			return null;//التوكن بعد فك التشفي مش مظبوطه 
+			return null;//التوكن بعد فك التشفير مش مظبوطه 
 		}
 	}
 }

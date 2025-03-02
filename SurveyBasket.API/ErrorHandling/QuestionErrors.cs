@@ -2,6 +2,6 @@
 
 public static class QuestionErrors
 {
-	public const string DuplicatedQuestion = "Question with the same content is already existed";
-	public const string NotFound = "Not Found Question with this id";
+	public static readonly Errors DuplicatedQuestion = new Errors("Question.Duplicated", "Question with the same content is already existed", StatusCodes.Status409Conflict);
+	public static readonly Errors NotFound = new Errors("Question.NotFound", "Question not found", StatusCodes.Status404NotFound);
 }

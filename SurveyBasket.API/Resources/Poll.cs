@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.API.Resource;
-public class Poll:BaseClass
+public class Poll : BaseClass
 {
 	public int Id { get; set; }
 	public string Title { get; set; } = null!;

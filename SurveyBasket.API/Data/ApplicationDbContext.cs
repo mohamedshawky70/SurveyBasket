@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using SurveyBasket.API.Resources;
 using System.Reflection;
-using System.Security.Claims;
 
 namespace SurveyBasket.API.Data;
 
@@ -19,6 +16,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	public DbSet<Answer> answers { get; set; }
 	public DbSet<Vote> votes { get; set; }
 	public DbSet<VoteAnswer> voteAnswers { get; set; }
+	//public DbSet<RefreshToken> RefreshTokens { get; set; }
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		//أي كلاس يبانبلمنت الانرفيس (أ انتتي كونفجريشن)هيضيفه هنا بدل مكنت هضيف عشروميت كلاس لو عندي عشروميت تابل 
@@ -35,7 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
 		//بدل مكنت كل مره هتضيف فيها ضيف معاك اليوز اللي ضاف وامتي , واللي حدث وامتي
-		var CurrentUserId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+		var CurrentUserId = _httpContextAccessor.HttpContext?.User.GetUserId();
 		var entries = ChangeTracker.Entries<BaseClass>();//لو بيحصل تغير علي اي جدول بيورث البيز,هاتهم كلهم
 		foreach (var entity in entries)
 		{
@@ -44,9 +42,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 			if (entity.State == EntityState.Modified)//لو بتحدث
 			{
 				entity.Property(x => x.UpdatedById).CurrentValue = CurrentUserId;
-				entity.Property(x => x.UpdatedIn).CurrentValue =DateTime.UtcNow;
+				entity.Property(x => x.UpdatedIn).CurrentValue = DateTime.UtcNow;
 			}
 		}
 		return base.SaveChangesAsync(cancellationToken);
 	}
+
 }

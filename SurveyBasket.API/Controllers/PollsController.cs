@@ -1,100 +1,100 @@
-
-using SurveyBasket.API.Data.Migrations;
-using SurveyBasket.API.Resource;
-using System.Threading.Tasks;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 namespace SurveyBasket.API.Controllers
 {
+	[ApiVersion(1, Deprecated = true)]
+	[ApiVersion(2)]
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize]
 	public class PollsController : ControllerBase
 	{
-		private readonly IUnitOfWork _unitOfWork;
-		private readonly IConfiguration _configuration;
-		public PollsController(IUnitOfWork unitOfWork, IConfiguration configuration)
+		private readonly IPollService _pollService;
+		public PollsController(IUnitOfWork unitOfWork, IPollService pollService)
 		{
-			_unitOfWork = unitOfWork;
-			_configuration = configuration;
+			_pollService = pollService;
 		}
 
 		[HttpGet("")]
-		public async Task<IActionResult> GetAllAsync()
+		public async Task<IActionResult> GetAll()
 		{
-			var Polls =await _unitOfWork.polls.GetAllAsync();
-			var Response = Polls.Adapt<IEnumerable<PollResponse>>();
-			return Ok(Response);
+			return Ok(await _pollService.GetAllAsync());
 		}
+
+
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetByIdAsync([FromRoute]int id, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken)
 		{
-			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
-			if (Poll is null)
-				return NotFound(PollErrors.NotFound);
-			var Response = Poll.Adapt<PollResponse>();
+			var Response = await _pollService.GetByIdAsync(id);
+			return Response.Match(
+				Response => Ok(Response),//لو مرجعش error
+				error => Problem(statusCode: error.StatusCode, //لو رجع error
+				title: error.Code, detail: error.Description)
+			);
+		}
+		//V1
+		[ApiVersion(1)]
+		[HttpGet("get-current")]
+		[Authorize(Roles = AppRoles.Member)]
+		[EnableRateLimiting("UserLimiter")]
+		public async Task<IActionResult> GetCurrentV1(CancellationToken cancellationToken)
+		{
+			var Response = await _pollService.GetCurrentAsyncV1();
 			return Ok(Response);
 		}
-		
-		[HttpGet("GetCurrentAsync")]
-		public async Task<IActionResult> GetCurrentAsync(CancellationToken cancellationToken)
+		//V2
+		[ApiVersion(2)]
+		[HttpGet("get-current")]
+		[Authorize(Roles = AppRoles.Member)]
+		[EnableRateLimiting("UserLimiter")]
+		public async Task<IActionResult> GetCurrentV2(CancellationToken cancellationToken)
 		{
-			var Poll = await _unitOfWork.polls.FindAllInclude(p => p.IsPublished && DateOnly.FromDateTime(DateTime.UtcNow) >=p.StartsAt&& DateOnly.FromDateTime(DateTime.UtcNow) <= p.EndsAt);
-			if (Poll is null)
-				return NotFound(PollErrors.NotFound);
-			var Response = Poll.Adapt<IEnumerable<PollResponse>>();
+			var Response = await _pollService.GetCurrentAsyncV2();
 			return Ok(Response);
 		}
 
 		[HttpPost("")]
-		public async Task<IActionResult> CreateAsync([FromBody]PollRequest request,
-			CancellationToken cancellationToken)
+		public async Task<IActionResult> Create([FromBody] PollRequest request, CancellationToken cancellationToken)
 		{
-			var IsExistedTitle = await _unitOfWork.polls.FindInclude(x => x.Title == request.Title);
-				if(IsExistedTitle != null)
-				   return BadRequest(PollErrors.DuplicatedPollTitle);
-			var Poll = request.Adapt<Poll>();
-			var newPoll = await _unitOfWork.polls.CreateAsync(Poll, cancellationToken);
-			var Response = newPoll.Adapt<PollResponse>();
-			return Ok(Response);
+			var Response = await _pollService.CreateAsync(request, cancellationToken);
+			return Response.Match(
+				//Ok شغال
+				Response => Ok(Response),//لو مرجعش error 
+				error => Problem(statusCode: error.StatusCode, //لو رجع error
+				title: error.Code, detail: error.Description)
+			);
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateAsync([FromRoute]int id,[FromBody] PollRequest request,
+		public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request,
 			CancellationToken cancellationToken)
 		{
-			var IsExistedTitle = await _unitOfWork.polls.FindInclude(x => x.Title == request.Title&&x.Id!= id);
-			if (IsExistedTitle != null)
-				return BadRequest(PollErrors.DuplicatedPollTitle);
-			//var Poll = request.Adapt<Poll>();
-			var Poll =await _unitOfWork.polls.GetByIdAsync(id);
-			if (Poll is null)
-				return NotFound(PollErrors.NotFound);
-
-			Poll.Title = request.Title;
-			Poll.Summary = request.Summary;
-			Poll.StartsAt = request.StartsAt;
-			Poll.EndsAt = request.EndsAt;
-
-			var newPoll= await _unitOfWork.polls.UpdateAsync(Poll, cancellationToken);
-			return Ok(newPoll.Adapt<PollResponse>());
+			var Response = await _pollService.UpdateAsync(id, request, cancellationToken);
+			return Response.Match(
+				Response => Ok(Response),
+				error => Problem(statusCode: error.StatusCode,
+				title: error.Code, detail: error.Description)
+			);
 		}
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteAsync([FromRoute]int id, CancellationToken cancellationToken)
+		public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
 		{
-			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
-			if (Poll is null)
-				return NotFound(PollErrors.NotFound);
-			await _unitOfWork.polls.DeleteAsync(Poll, cancellationToken);
-			return Ok();
+			var Response = await _pollService.DeleteAsync(id, cancellationToken);
+			return Response.Match(
+				Response => Ok(Response),
+				error => Problem(statusCode: error.StatusCode,
+				title: error.Code, detail: error.Description)
+			);
 		}
-		[HttpPut("TogglePublishStatus/{id}")]
-		public async Task<IActionResult> TogglePublishStatus([FromRoute]int id, CancellationToken cancellationToken)
+		[HttpPut("toggle-publish-status/{id}")]
+		public async Task<IActionResult> TogglePublishStatus([FromRoute] int id, CancellationToken cancellationToken)
 		{
-			var Poll = await _unitOfWork.polls.GetByIdAsync(id, cancellationToken);
-			if (Poll is null)
-				return NotFound(PollErrors.NotFound);
-			Poll.IsPublished = !Poll.IsPublished;
-			await _unitOfWork.polls.UpdateAsync(Poll, cancellationToken);
-			return Ok();
+			var Response = await _pollService.TogglePublishStatus(id, cancellationToken);
+			return Response.Match(
+				Response => Ok(Response),
+				error => Problem(statusCode: error.StatusCode,
+				title: error.Code, detail: error.Description)
+			);
 		}
 	}
 }

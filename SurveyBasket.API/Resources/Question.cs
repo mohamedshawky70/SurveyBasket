@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.Resources;
 
-public class Question:BaseClass
+public class Question : BaseClass
 {
 	public int Id { get; set; }
 	public string Content { get; set; } = string.Empty;
@@ -8,5 +8,6 @@ public class Question:BaseClass
 	public int PollId { get; set; }
 	public Poll? Poll { get; set; }
 	public ICollection<Answer> answers { get; set; } = [];
+	public ICollection<VoteAnswer> votes { get; set; } = [];
 
 }

@@ -1,8 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using SurveyBasket.API.Data;
-using SurveyBasket.API.Resources;
-using System.Threading.Tasks;
+﻿using SurveyBasket.API.Data;
 
 namespace SurveyBasket.API.Repository.BaseRopository;
 
@@ -15,6 +11,9 @@ public class UnitOfWork : IUnitOfWork
 	public IBaseRepo<Vote> votes { get; }
 
 	public IBaseRepo<VoteAnswer> voteAnswers { get; }
+	public IBaseRepo<ApplicationUser> ApplicationUser { get; }
+
+
 
 	public UnitOfWork(ApplicationDbContext dbContext)
 	{
@@ -24,5 +23,5 @@ public class UnitOfWork : IUnitOfWork
 		votes = new BaseRepo<Vote>(_dbContext);
 		voteAnswers = new BaseRepo<VoteAnswer>(_dbContext);
 	}
-	
+
 }

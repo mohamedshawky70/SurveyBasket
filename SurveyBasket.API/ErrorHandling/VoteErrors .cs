@@ -2,7 +2,5 @@
 
 public static class VoteErrors
 {
-	public const string DuplicatedVote =  "This user already voted for this poll";
-	//public const string NotFound =  "Not Found poll with this Id";
-
+	public static readonly Errors DuplicatedVote = new Errors("Vote.Duplicated", "This user already voted for this poll", StatusCodes.Status409Conflict);
 }
