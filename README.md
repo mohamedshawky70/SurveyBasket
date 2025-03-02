@@ -64,7 +64,7 @@ educational institutions, or anyone looking to gather feedback or conduct resear
   - **Code-First Migrations:** Automatically generate database schema from your code.
   - **Entity Mapping:** Ensure proper mapping of domain entities to database tables.
 
-### 3. [Auth Section]
+### 3. [Auth Section](#auth-section)
 - **Login:** Secure user authentication.
 - **Reset Password:** Provide password recovery options.
 - **Confirm Email** Sent Email virefication to user to avoid fake emails.
