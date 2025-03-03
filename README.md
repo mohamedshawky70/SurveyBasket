@@ -39,6 +39,8 @@ educational institutions, or anyone looking to gather feedback or conduct resear
 
 -**⚠️ Error Handling with Result Pattern**: Employed a result pattern for structured error handling, providing clear and actionable feedback to users.
 
+-**🚦CORS (Cross-Origin Resource Sharing)**: a security feature implemented by web browsers to prevent web pages from making requests to a different domain than the one that served the web page. 
+
 -**🔄 Automapper/Mapster**: Utilized for efficient object mapping between models, improving data handling and reducing boilerplate code.
 
 -**✅ Fluent Validation**: Ensured data integrity by effectively validating inputs, leading to user-friendly error messages.
@@ -56,6 +58,12 @@ educational institutions, or anyone looking to gather feedback or conduct resear
 -**🗃️ Distributed Caching**: Optimized performance with caching for frequently accessed data, significantly improving response times.
 
 -**📧 Email Confirmation**: Managed user email confirmations, password changes, and resets seamlessly to enhance security.
+
+-**📊Pagination**:To manage and display large datasets by breaking them into smaller.
+
+-**🚦Sorting**: the ability to organize and return data in a specific order based on one or more criteria .
+
+-**Searching**: the ability to filter and retrieve data based on specific criteria provided by the client.
 
 -**📈 API Versioning**: Supported multiple versions of the API to ensure backward compatibility and smooth transitions as the project evolves.
 
