@@ -51,8 +51,6 @@ educational institutions, or anyone looking to gather feedback or conduct resear
 
 -**🛠️ Background Jobs**: Used Hangfire for managing background tasks like sending confirmation emails and processing password resets seamlessly.
 
--**🛠️ Background Jobs**: Used Hangfire for managing background tasks like sending confirmation emails and processing password resets seamlessly.
-
 -**🔍 Health Checks**: Incorporated health checks to monitor the system’s status and performance, ensuring reliability and uptime.
 
 -**🗃️ Distributed Caching**: Optimized performance with caching for frequently accessed data, significantly improving response times.
@@ -63,7 +61,7 @@ educational institutions, or anyone looking to gather feedback or conduct resear
 
 -**🚦Sorting**: the ability to organize and return data in a specific order based on one or more criteria .
 
--**Searching**: the ability to filter and retrieve data based on specific criteria provided by the client.
+-**🔍Searching**: the ability to filter and retrieve data based on specific criteria provided by the client.
 
 -**📈 API Versioning**: Supported multiple versions of the API to ensure backward compatibility and smooth transitions as the project evolves.
 
