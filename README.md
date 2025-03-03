@@ -3,6 +3,17 @@
 # Project Mind Map
 ![Image](https://github.com/user-attachments/assets/e0c8bccc-cee3-484b-a5ea-fccedee52e1a)
 
+## Glimpse of the working solution
+![Image](https://github.com/user-attachments/assets/85c5a619-bd24-4eaa-b0a8-eb1a286a059a)
+![Image](https://github.com/user-attachments/assets/fb066d4a-7724-4faa-bdf4-f8b3049715fd)
+![Image](https://github.com/user-attachments/assets/1bd67824-30eb-4f4a-9c0f-dd81e9110399)
+![Image](https://github.com/user-attachments/assets/fabb4e04-9a39-4f0e-9290-d4aff51d8bd3)
+![Image](https://github.com/user-attachments/assets/04ad89ae-2b98-489e-9da0-e456242dbe59)
+![Image](https://github.com/user-attachments/assets/d6caf545-9906-4caa-a894-1e058e77af7a)
+![Image](https://github.com/user-attachments/assets/e6328fb1-6c34-4fa7-a912-c7fc1871d49b)
+![Image](https://github.com/user-attachments/assets/30d96cc2-8cde-4426-aed0-4a2d352afaa6)
+![Image](https://github.com/user-attachments/assets/2a138e08-3278-4cc1-9db7-4e6416474445)
+![Image](https://github.com/user-attachments/assets/efc922e5-1c9f-4268-9ad8-0a57ab0b38b1)
 ## Project Overview
 
 **Objective:** 
