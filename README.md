@@ -24,8 +24,11 @@ educational institutions, or anyone looking to gather feedback or conduct resear
 
 ## Tech Stack
 -**Backend**: .NET 9 (Web API)
+
 -**Database**: SQL Server 
+
 -**Authentication**: Secure access to surveys and responses using JWT token and refresh token authentication 
+
 -**ORM**: Entity Framework Core for database interactions
 
 ## Key Features
